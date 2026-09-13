@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../utils/extension/context_extension.dart';
 
-
 /// Five-point star for the footer flourish divider.
 class StoryStarPin extends StatelessWidget {
   const StoryStarPin({super.key, this.size = 22});

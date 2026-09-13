@@ -140,11 +140,14 @@ class WeddingHeroInviteCard extends HookWidget {
                       painter: _InviteCardPainter(
                         shape: _shape,
                         withArch: hasImage,
-                        paperFill: context.colorScheme.surface.withValues(alpha: 0.86),
-                        outerFrame: context.colorScheme.outline.withValues(alpha: 0.95),
-                        innerFrame:
-                            context.colorScheme.outlineVariant.withValues(alpha: 0.7),
-                        cardShadow: context.colorScheme.shadow.withValues(alpha: 0.16),
+                        paperFill:
+                            context.colorScheme.surface.withValues(alpha: 0.86),
+                        outerFrame:
+                            context.colorScheme.outline.withValues(alpha: 0.95),
+                        innerFrame: context.colorScheme.outlineVariant
+                            .withValues(alpha: 0.7),
+                        cardShadow:
+                            context.colorScheme.shadow.withValues(alpha: 0.16),
                       ),
                     ),
                   ),

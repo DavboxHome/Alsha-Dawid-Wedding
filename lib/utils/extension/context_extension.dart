@@ -197,7 +197,8 @@ extension ContextExtension on BuildContext {
     return launchUrl(
       uri,
       webOnlyWindowName: kIsWeb ? '_blank' : null,
-      mode: kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
+      mode:
+          kIsWeb ? LaunchMode.platformDefault : LaunchMode.externalApplication,
     );
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/extension/context_extension.dart';
 
-
 /// Custom stroke-drawn icons for navigation, contact, and other UI affordances.
 class LineIcon extends StatelessWidget {
   const LineIcon({
@@ -24,11 +23,14 @@ class LineIcon extends StatelessWidget {
       height: size,
       child: CustomPaint(
         painter: switch (variant) {
-          LineIconVariant.calendar => _CalendarIconPainter(color: effectiveColor),
+          LineIconVariant.calendar =>
+            _CalendarIconPainter(color: effectiveColor),
           LineIconVariant.mapPin => _MapPinIconPainter(color: effectiveColor),
-          LineIconVariant.megaphone => _MegaphoneIconPainter(color: effectiveColor),
+          LineIconVariant.megaphone =>
+            _MegaphoneIconPainter(color: effectiveColor),
           LineIconVariant.email => _EmailIconPainter(color: effectiveColor),
-          LineIconVariant.instagram => _InstagramIconPainter(color: effectiveColor),
+          LineIconVariant.instagram =>
+            _InstagramIconPainter(color: effectiveColor),
           LineIconVariant.church => _ChurchIconPainter(color: effectiveColor),
           LineIconVariant.manor => _ManorIconPainter(color: effectiveColor),
           LineIconVariant.dress => _DressIconPainter(color: effectiveColor),

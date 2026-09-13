@@ -48,8 +48,7 @@ const _faqs = [
   ),
   FaqItem(
     question: 'WHEN SHOULD I RSVP BY?',
-    answer:
-        'RSVPs closed on 17th July 2026. The guest list is now final — '
+    answer: 'RSVPs closed on 17th July 2026. The guest list is now final — '
         'if you still need to get in touch about attendance, please contact us directly.',
   ),
 ];
@@ -93,13 +92,12 @@ class _FaqHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Text(
           'Frequently Asked Questions',
           textAlign: TextAlign.center,
-          style: context.scriptHero( fontSize: 48, height: 1.08),
+          style: context.scriptHero(fontSize: 48, height: 1.08),
         ),
         const SizedBox(height: 10),
         Text(

@@ -59,13 +59,12 @@ class _MapHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         Text(
           'If you want to rest your head...',
           textAlign: TextAlign.center,
-          style: context.scriptHero( fontSize: 48, height: 1.08),
+          style: context.scriptHero(fontSize: 48, height: 1.08),
         ),
         const SizedBox(height: 10),
         Text(
@@ -227,7 +226,6 @@ class _MapSetupRequiredPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenHeight = MediaQuery.sizeOf(context).height;
@@ -299,7 +297,6 @@ class _MapPoiInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Material(
       color: Colors.transparent,
       child: DecoratedBox(
@@ -349,7 +346,8 @@ class _MapPoiInfoCard extends StatelessWidget {
                     tooltip: 'Close',
                     icon: Icon(
                       Icons.close_rounded,
-                      color: context.colorScheme.onSurface.withValues(alpha: 0.72),
+                      color:
+                          context.colorScheme.onSurface.withValues(alpha: 0.72),
                     ),
                   ),
                 ],

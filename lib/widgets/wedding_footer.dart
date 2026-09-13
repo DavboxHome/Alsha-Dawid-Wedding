@@ -125,11 +125,10 @@ class _FooterContactInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final lineStyle = context.contactLine().copyWith(
-      fontSize: 12,
-      color: Colors.white.withValues(alpha: 0.85),
-    );
+          fontSize: 12,
+          color: Colors.white.withValues(alpha: 0.85),
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,7 +139,8 @@ class _FooterContactInfo extends StatelessWidget {
           label: content.contact.email,
           style: lineStyle,
           onTap: () async {
-            final opened = await context.openContactEmail(content.contact.email);
+            final opened =
+                await context.openContactEmail(content.contact.email);
             if (!opened && context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

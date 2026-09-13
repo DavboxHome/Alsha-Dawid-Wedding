@@ -39,15 +39,13 @@ class StrapiCollectionResponse<T> {
     }
 
     return StrapiCollectionResponse<T>(
-      data: raw
-          .map((item) {
-            if (item is! Map<String, dynamic>) {
-              throw StateError('Strapi collection item was not an object.');
-            }
+      data: raw.map((item) {
+        if (item is! Map<String, dynamic>) {
+          throw StateError('Strapi collection item was not an object.');
+        }
 
-            return fromJson(item);
-          })
-          .toList(growable: false),
+        return fromJson(item);
+      }).toList(growable: false),
     );
   }
 }
