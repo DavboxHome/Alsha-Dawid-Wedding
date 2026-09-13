@@ -9,6 +9,7 @@ import '../../models/app/app_page.dart';
 import '../../models/content/cms_image.dart';
 import '../../router/app_router.gr.dart';
 import '../../utils/extension/context_extension.dart';
+import '../../utils/extension/list_extension.dart';
 import '../../widgets/page_availability_gate.dart';
 
 @RoutePage()
@@ -21,8 +22,11 @@ class GalleryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gallery =
-        ref.watch(weddingContentRepositoryProvider).requireValue.gallery;
+    final gallery = ref
+        .watch(weddingContentRepositoryProvider)
+        .requireValue
+        .gallery
+        .shuffled;
 
     return PageAvailabilityGate(
       page: AppPage.gallery,
