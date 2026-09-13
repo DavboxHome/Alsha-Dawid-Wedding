@@ -38,4 +38,6 @@ class WeddingContent with _$WeddingContent {
       .map((photo) => photo.imageUrl)
       .whereType<String>()
       .toList(growable: false);
+
+  List<CmsImage> get shuffledGallery => [...gallery]..shuffle();
 }

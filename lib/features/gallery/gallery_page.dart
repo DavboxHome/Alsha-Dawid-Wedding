@@ -7,9 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../content/repositories/wedding_content_repository.dart';
 import '../../models/app/app_page.dart';
 import '../../models/content/cms_image.dart';
+import '../../providers/gallery_shuffle_provider.dart';
 import '../../router/app_router.gr.dart';
 import '../../utils/extension/context_extension.dart';
-import '../../utils/extension/list_extension.dart';
 import '../../widgets/page_availability_gate.dart';
 
 @RoutePage()
@@ -22,11 +22,11 @@ class GalleryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gallery = ref
-        .watch(weddingContentRepositoryProvider)
-        .requireValue
-        .gallery
-        .shuffled;
+    final content =
+        ref.watch(weddingContentRepositoryProvider).requireValue;
+    final shuffleEnabled = ref.watch(galleryShuffleProvider);
+    final gallery =
+        shuffleEnabled ? content.shuffledGallery : content.gallery;
 
     return PageAvailabilityGate(
       page: AppPage.gallery,
@@ -182,6 +182,7 @@ class _ScatteredPolaroidGallery extends StatelessWidget {
           children: [
             for (var i = 0; i < gallery.length; i++)
               SizedBox(
+                key: ValueKey(gallery[i].url),
                 width: cellWidth,
                 height: cellHeight,
                 child: Transform.translate(
