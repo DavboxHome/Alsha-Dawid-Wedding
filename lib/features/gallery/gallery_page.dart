@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../content/repositories/wedding_content_repository.dart';
@@ -22,11 +23,9 @@ class GalleryPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final content =
-        ref.watch(weddingContentRepositoryProvider).requireValue;
+    final content = ref.watch(weddingContentRepositoryProvider).requireValue;
     final shuffleEnabled = ref.watch(galleryShuffleProvider);
-    final gallery =
-        shuffleEnabled ? content.shuffledGallery : content.gallery;
+    final gallery = shuffleEnabled ? content.shuffledGallery : content.gallery;
 
     return PageAvailabilityGate(
       page: AppPage.gallery,
@@ -281,39 +280,110 @@ class _GalleryPolaroid extends StatelessWidget {
             8,
             width * 0.16,
           ),
-          child: Image.network(
-            image.absoluteUrl,
+          child: _LazyGalleryImage(
+            imageUrl: image.previewUrl,
             width: width - 16,
             height: imageHeight,
-            fit: BoxFit.cover,
-            loadingBuilder: (
-              context,
-              child,
-              loadingProgress,
-            ) {
-              if (loadingProgress == null) {
-                return child;
-              }
-
-              return _GalleryImagePlaceholder(
-                width: width - 16,
-                height: imageHeight,
-                loading: true,
-              );
-            },
-            errorBuilder: (
-              context,
-              error,
-              stackTrace,
-            ) {
-              return _GalleryImagePlaceholder(
-                width: width - 16,
-                height: imageHeight,
-              );
-            },
           ),
         ),
       ),
+    );
+  }
+}
+
+class _LazyGalleryImage extends HookWidget {
+  const _LazyGalleryImage({
+    required this.imageUrl,
+    required this.width,
+    required this.height,
+  });
+
+  final String imageUrl;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final shouldLoad = useState(false);
+    final scrollPosition = Scrollable.maybeOf(context)?.position;
+
+    useEffect(
+      () {
+        if (shouldLoad.value) {
+          return null;
+        }
+
+        void checkVisibility() {
+          if (!context.mounted || shouldLoad.value) {
+            return;
+          }
+
+          final renderObject = context.findRenderObject();
+          if (renderObject is! RenderBox || !renderObject.hasSize) {
+            return;
+          }
+
+          const preloadDistance = 600.0;
+          final imageTop = renderObject.localToGlobal(Offset.zero).dy;
+          final imageBottom = imageTop + renderObject.size.height;
+          final viewportHeight = MediaQuery.sizeOf(context).height;
+
+          if (imageBottom >= -preloadDistance &&
+              imageTop <= viewportHeight + preloadDistance) {
+            shouldLoad.value = true;
+          }
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          checkVisibility();
+        });
+
+        scrollPosition?.addListener(checkVisibility);
+
+        return () {
+          scrollPosition?.removeListener(checkVisibility);
+        };
+      },
+      [scrollPosition, shouldLoad.value],
+    );
+
+    if (!shouldLoad.value) {
+      return _GalleryImagePlaceholder(
+        width: width,
+        height: height,
+      );
+    }
+
+    return Image.network(
+      imageUrl,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      loadingBuilder: (
+        context,
+        child,
+        loadingProgress,
+      ) {
+        if (loadingProgress == null) {
+          return child;
+        }
+
+        return _GalleryImagePlaceholder(
+          width: width,
+          height: height,
+          loading: true,
+        );
+      },
+      errorBuilder: (
+        context,
+        error,
+        stackTrace,
+      ) {
+        return _GalleryImagePlaceholder(
+          width: width,
+          height: height,
+        );
+      },
     );
   }
 }
