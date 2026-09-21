@@ -20,36 +20,50 @@ class VendorsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vendors = ref.watch(vendorsRepositoryProvider).requireValue;
+    final vendorsAsync = ref.watch(vendorsRepositoryProvider);
 
     return PageAvailabilityGate(
       page: AppPage.vendors,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _VendorsHeader(),
-            const SizedBox(height: 22),
-            const HeartDivider(),
-            const SizedBox(height: 22),
-            Text(
-              'The wonderful people helping us bring our day to life. '
-              'Tap any of them to visit their Instagram or website.',
-              textAlign: TextAlign.center,
-              style: context.bodySerif(fontSize: 14.5),
-            ),
-            const SizedBox(height: 28),
-            for (final (i, category) in VendorCategory.values.indexed) ...[
-              _VendorCategorySection(
-                category: category,
-                vendors: vendors,
+      child: vendorsAsync.when(
+        loading: () => const Padding(
+          padding: EdgeInsets.symmetric(vertical: 48),
+          child: Center(child: CircularProgressIndicator()),
+        ),
+        error: (error, _) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+          child: Text(
+            'Could not load vendors.\n$error',
+            textAlign: TextAlign.center,
+            style: context.bodySerif(fontSize: 14.5),
+          ),
+        ),
+        data: (vendors) => Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const _VendorsHeader(),
+              const SizedBox(height: 22),
+              const HeartDivider(),
+              const SizedBox(height: 22),
+              Text(
+                'The wonderful people helping us bring our day to life. '
+                'Tap a link to visit them online.',
+                textAlign: TextAlign.center,
+                style: context.bodySerif(fontSize: 14.5),
               ),
-              if (i < VendorCategory.values.length - 1)
-                const SizedBox(height: 28),
+              const SizedBox(height: 28),
+              for (final (i, category) in VendorCategory.values.indexed) ...[
+                _VendorCategorySection(
+                  category: category,
+                  vendors: vendors,
+                ),
+                if (i < VendorCategory.values.length - 1)
+                  const SizedBox(height: 28),
+              ],
+              const SizedBox(height: 40),
             ],
-            const SizedBox(height: 40),
-          ],
+          ),
         ),
       ),
     );
@@ -127,9 +141,7 @@ class _VendorTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final instagramUri = item.links.instagramUri;
-    final websiteUri = item.links.websiteUri;
-    final hasLink = instagramUri != null || websiteUri != null;
+    final links = item.links.entries;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -150,7 +162,10 @@ class _VendorTile extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Row(
           children: [
-            _VendorIconBadge(icon: item.icon),
+            _VendorIconBadge(
+              icon: item.icon,
+              logoUrl: item.logoUrl,
+            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -160,25 +175,17 @@ class _VendorTile extends StatelessWidget {
                     item.name,
                     style: context.faqQuestion(),
                   ),
-                  if (hasLink) ...[
+                  if (links.isNotEmpty) ...[
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        if (instagramUri != null)
+                        for (final link in links)
                           _VendorLinkChip(
-                            icon: Icons.camera_alt_rounded,
-                            label:
-                                '@${item.links.instagramHandle ?? 'instagram'}',
-                            uri: instagramUri,
-                            vendorName: item.name,
-                          ),
-                        if (websiteUri != null)
-                          _VendorLinkChip(
-                            icon: Icons.language_rounded,
-                            label: websiteUri.host.replaceFirst('www.', ''),
-                            uri: websiteUri,
+                            icon: link.icon,
+                            label: link.label,
+                            uri: link.uri,
                             vendorName: item.name,
                           ),
                       ],
@@ -262,9 +269,13 @@ class _VendorLinkChip extends StatelessWidget {
 }
 
 class _VendorIconBadge extends StatelessWidget {
-  const _VendorIconBadge({required this.icon});
+  const _VendorIconBadge({
+    required this.icon,
+    this.logoUrl,
+  });
 
   final IconData icon;
+  final String? logoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -285,13 +296,28 @@ class _VendorIconBadge extends StatelessWidget {
           color: context.goldBrass.withValues(alpha: 0.28),
         ),
       ),
-      child: Center(
-        child: Icon(
-          icon,
-          size: 20,
-          color: context.colorScheme.primary.withValues(alpha: 0.75),
-        ),
-      ),
+      clipBehavior: Clip.antiAlias,
+      child: logoUrl == null
+          ? Center(
+              child: Icon(
+                icon,
+                size: 20,
+                color: context.colorScheme.primary.withValues(alpha: 0.75),
+              ),
+            )
+          : Image.network(
+              logoUrl!,
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Center(
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: context.colorScheme.primary.withValues(alpha: 0.75),
+                ),
+              ),
+            ),
     );
   }
 }

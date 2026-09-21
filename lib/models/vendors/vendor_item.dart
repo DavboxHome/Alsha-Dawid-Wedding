@@ -108,6 +108,90 @@ class VendorLinks with _$VendorLinks {
 
     return value.replaceFirst(RegExp(r'^@'), '');
   }
+
+  /// All non-null social/website links ready for display.
+  List<VendorLinkEntry> get entries {
+    return [
+      if (instagramUri != null)
+        VendorLinkEntry(
+          label: '@${instagramHandle ?? 'instagram'}',
+          icon: Icons.camera_alt_rounded,
+          uri: instagramUri!,
+        ),
+      if (websiteUri != null)
+        VendorLinkEntry(
+          label: _websiteLabel(websiteUri!),
+          icon: Icons.language_rounded,
+          uri: websiteUri!,
+        ),
+      if (facebookUri != null)
+        VendorLinkEntry(
+          label: 'Facebook',
+          icon: Icons.facebook,
+          uri: facebookUri!,
+        ),
+      if (tiktokUri != null)
+        VendorLinkEntry(
+          label: 'TikTok',
+          icon: Icons.music_note_rounded,
+          uri: tiktokUri!,
+        ),
+      if (youtubeUri != null)
+        VendorLinkEntry(
+          label: 'YouTube',
+          icon: Icons.play_circle_filled_rounded,
+          uri: youtubeUri!,
+        ),
+      if (twitterUri != null)
+        VendorLinkEntry(
+          label: 'X',
+          icon: Icons.alternate_email_rounded,
+          uri: twitterUri!,
+        ),
+      if (linkedinUri != null)
+        VendorLinkEntry(
+          label: 'LinkedIn',
+          icon: Icons.business_center_rounded,
+          uri: linkedinUri!,
+        ),
+      if (pinterestUri != null)
+        VendorLinkEntry(
+          label: 'Pinterest',
+          icon: Icons.push_pin_rounded,
+          uri: pinterestUri!,
+        ),
+      if (redditUri != null)
+        VendorLinkEntry(
+          label: 'Reddit',
+          icon: Icons.forum_rounded,
+          uri: redditUri!,
+        ),
+      if (telegramUri != null)
+        VendorLinkEntry(
+          label: 'Telegram',
+          icon: Icons.send_rounded,
+          uri: telegramUri!,
+        ),
+      if (whatsappUri != null)
+        VendorLinkEntry(
+          label: 'WhatsApp',
+          icon: Icons.chat_rounded,
+          uri: whatsappUri!,
+        ),
+    ];
+  }
+}
+
+class VendorLinkEntry {
+  const VendorLinkEntry({
+    required this.label,
+    required this.icon,
+    required this.uri,
+  });
+
+  final String label;
+  final IconData icon;
+  final Uri uri;
 }
 
 Uri? _absoluteUri(String? value) {
@@ -117,6 +201,15 @@ Uri? _absoluteUri(String? value) {
   }
 
   return Uri.tryParse(trimmed);
+}
+
+String _websiteLabel(Uri uri) {
+  final host = uri.host.replaceFirst('www.', '');
+  if (host.isNotEmpty) {
+    return host;
+  }
+
+  return 'Website';
 }
 
 Uri? _socialUri(String? value, String Function(String handle) builder) {
