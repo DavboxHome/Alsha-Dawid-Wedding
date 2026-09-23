@@ -27,6 +27,16 @@ class WeddingPartyMember with _$WeddingPartyMember {
   bool get hasBio => bio?.trim().isNotEmpty ?? false;
 
   String? get photoUrl {
+    final value = photo?.previewUrl.trim();
+
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    return value;
+  }
+
+  String? get fullPhotoUrl {
     final value = photo?.absoluteUrl.trim();
 
     if (value == null || value.isEmpty) {

@@ -8,6 +8,7 @@ import '../../models/content/content.dart';
 import '../../router/app_router.gr.dart';
 import '../../utils/extension/context_extension.dart';
 import '../../widgets/heart_divider.dart';
+import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
 import '../../widgets/party_member_polaroid_overlay.dart';
 
@@ -268,22 +269,18 @@ class _PartyPortrait extends StatelessWidget {
               child: ClipOval(
                 child: photoUrl == null
                     ? const _PartyPortraitPlaceholder()
-                    : Image.network(
-                        photoUrl,
+                    : LazyCmsImage(
+                        imageUrl: photoUrl,
                         width: portraitSize,
                         height: portraitSize,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, progress) {
-                          if (progress == null) {
-                            return child;
-                          }
-
-                          return const _PartyPortraitPlaceholder(
-                            loading: true,
+                        placeholderBuilder: (
+                          context, {
+                          required loading,
+                        }) {
+                          return _PartyPortraitPlaceholder(
+                            loading: loading,
                           );
                         },
-                        errorBuilder: (context, error, stackTrace) =>
-                            const _PartyPortraitPlaceholder(),
                       ),
               ),
             ),

@@ -247,7 +247,7 @@ class VendorItem with _$VendorItem {
       _$VendorItemFromJson(json);
 
   String? get logoUrl {
-    final value = logo?.absoluteUrl.trim();
+    final value = logo?.previewUrl.trim();
 
     if (value == null || value.isEmpty) {
       return null;

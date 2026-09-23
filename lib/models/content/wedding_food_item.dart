@@ -39,7 +39,7 @@ class WeddingFoodItem with _$WeddingFoodItem {
   }
 
   String? get imageUrl {
-    final value = image?.absoluteUrl.trim();
+    final value = image?.previewUrl.trim();
 
     if (value == null || value.isEmpty) {
       return null;

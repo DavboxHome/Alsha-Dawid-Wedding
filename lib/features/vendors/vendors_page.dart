@@ -7,6 +7,7 @@ import '../../models/app/app_page.dart';
 import '../../models/vendors/vendor_item.dart';
 import '../../router/app_router.gr.dart';
 import '../../widgets/heart_divider.dart';
+import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
 import '../../utils/extension/context_extension.dart';
 
@@ -305,18 +306,22 @@ class _VendorIconBadge extends StatelessWidget {
                 color: context.colorScheme.primary.withValues(alpha: 0.75),
               ),
             )
-          : Image.network(
-              logoUrl!,
+          : LazyCmsImage(
+              imageUrl: logoUrl!,
               width: 44,
               height: 44,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Center(
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: context.colorScheme.primary.withValues(alpha: 0.75),
-                ),
-              ),
+              placeholderBuilder: (
+                context, {
+                required loading,
+              }) {
+                return Center(
+                  child: Icon(
+                    icon,
+                    size: 20,
+                    color: context.colorScheme.primary.withValues(alpha: 0.75),
+                  ),
+                );
+              },
             ),
     );
   }

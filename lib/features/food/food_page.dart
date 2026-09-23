@@ -9,6 +9,7 @@ import '../../models/content/content.dart';
 import '../../router/app_router.gr.dart';
 import '../../utils/extension/context_extension.dart';
 import '../../widgets/heart_divider.dart';
+import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
 
 @RoutePage()
@@ -598,27 +599,14 @@ class _FoodItemImage extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: height,
-        child: Image.network(
-          url,
-          fit: BoxFit.cover,
-          loadingBuilder: (
-            context,
-            child,
-            loadingProgress,
-          ) {
-            if (loadingProgress == null) {
-              return child;
-            }
-
-            return _FoodImagePlaceholder(
-              height: height,
-            );
-          },
-          errorBuilder: (
-            context,
-            error,
-            stackTrace,
-          ) {
+        child: LazyCmsImage(
+          imageUrl: url,
+          width: width,
+          height: height,
+          placeholderBuilder: (
+            context, {
+            required loading,
+          }) {
             return _FoodImagePlaceholder(
               height: height,
             );

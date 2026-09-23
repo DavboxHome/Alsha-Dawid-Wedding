@@ -8,6 +8,7 @@ import '../../models/content/our_story_photo.dart';
 import '../../router/app_router.gr.dart';
 import '../../utils/extension/context_extension.dart';
 import '../../widgets/heart_divider.dart';
+import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
 import 'our_story_decorations.dart';
 
@@ -198,34 +199,18 @@ class _PolaroidPhoto extends StatelessWidget {
                   width: width - 24,
                   height: imageHeight,
                 )
-              : Image.network(
-                  imageUrl!,
+              : LazyCmsImage(
+                  imageUrl: imageUrl!,
                   width: width - 24,
                   height: imageHeight,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (
-                    context,
-                    child,
-                    loadingProgress,
-                  ) {
-                    if (loadingProgress == null) {
-                      return child;
-                    }
-
+                  placeholderBuilder: (
+                    context, {
+                    required loading,
+                  }) {
                     return _StoryImagePlaceholder(
                       width: width - 24,
                       height: imageHeight,
-                      loading: true,
-                    );
-                  },
-                  errorBuilder: (
-                    context,
-                    error,
-                    stackTrace,
-                  ) {
-                    return _StoryImagePlaceholder(
-                      width: width - 24,
-                      height: imageHeight,
+                      loading: loading,
                     );
                   },
                 ),

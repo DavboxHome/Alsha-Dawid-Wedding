@@ -44,7 +44,7 @@ class _PartyMemberPolaroidOverlay extends StatelessWidget {
     );
     final width = (MediaQuery.sizeOf(context).width * 0.78).clamp(240.0, 300.0);
     final imageHeight = width * 0.92;
-    final photoUrl = member.photoUrl;
+    final photoUrl = member.fullPhotoUrl;
     final caption = member.hasBio ? member.bio!.trim() : '';
 
     return Material(
