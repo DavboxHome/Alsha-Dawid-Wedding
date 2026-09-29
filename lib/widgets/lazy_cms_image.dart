@@ -9,6 +9,7 @@ class LazyCmsImage extends HookWidget {
     this.width,
     this.height,
     this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
     this.preloadDistance = 600,
     required this.placeholderBuilder,
   });
@@ -17,6 +18,7 @@ class LazyCmsImage extends HookWidget {
   final double? width;
   final double? height;
   final BoxFit fit;
+  final AlignmentGeometry alignment;
   final double preloadDistance;
   final Widget Function(BuildContext context, {required bool loading})
       placeholderBuilder;
@@ -74,6 +76,7 @@ class LazyCmsImage extends HookWidget {
       width: width,
       height: height,
       fit: fit,
+      alignment: alignment,
       loadingBuilder: (
         context,
         child,

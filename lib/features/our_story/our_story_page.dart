@@ -167,7 +167,7 @@ class _PolaroidPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageHeight = width * 0.92;
+    final imageHeight = width * 1.15;
 
     return Transform.rotate(
       angle: rotation,
@@ -203,6 +203,7 @@ class _PolaroidPhoto extends StatelessWidget {
                   imageUrl: imageUrl!,
                   width: width - 24,
                   height: imageHeight,
+                  alignment: Alignment.topCenter,
                   placeholderBuilder: (
                     context, {
                     required loading,
