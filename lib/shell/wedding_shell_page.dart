@@ -1,17 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../features/home/home_page.dart';
-import '../utils/website_refresh.dart';
 import '../router/app_router.gr.dart';
+import '../utils/extension/context_extension.dart';
+import '../utils/website_refresh.dart';
 import '../widgets/hard_edge_color.dart';
+import '../widgets/swipe_scroll_hint.dart';
 import '../widgets/wedding_app_bar.dart';
 import '../widgets/wedding_drawer.dart';
 import '../widgets/wedding_footer.dart';
-import '../utils/extension/context_extension.dart';
 
 const _footerTopSpacing = 40.0;
 
@@ -47,6 +49,9 @@ class _WeddingShellScaffold extends HookConsumerWidget {
     final activeRouteName = routerContext.router.current.name;
     final previousRouteName = useRef(activeRouteName);
 
+    final isOurStory = activeRouteName == OurStoryRoute.name;
+    final showStoryScrollHint = useState(false);
+
     void scrollToTop() {
       if (scrollController.hasClients) {
         scrollController.jumpTo(0);
@@ -65,6 +70,30 @@ class _WeddingShellScaffold extends HookConsumerWidget {
           previousRouteName.value = activeRouteName;
           scrollToTopAfterFrame();
         }
+
+        return null;
+      },
+      [activeRouteName],
+    );
+
+    useEffect(
+      () {
+        showStoryScrollHint.value = false;
+
+        if (!isOurStory) {
+          return null;
+        }
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!context.mounted || !scrollController.hasClients) {
+            return;
+          }
+
+          final position = scrollController.position;
+
+          showStoryScrollHint.value =
+              position.maxScrollExtent > 0 && position.pixels <= 0;
+        });
 
         return null;
       },
@@ -100,63 +129,96 @@ class _WeddingShellScaffold extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: CustomScrollView(
-                  controller: scrollController,
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  slivers: [
-                    WeddingAppBar(onHomeTap: goHome),
-                    CupertinoSliverRefreshControl(
-                      onRefresh: () =>
-                          ref.read(websiteRefreshProvider.notifier).refresh(),
-                      builder: (
-                        context,
-                        refreshState,
-                        pulledExtent,
-                        refreshTriggerPullDistance,
-                        refreshIndicatorExtent,
-                      ) {
-                        final progress =
-                            (pulledExtent / refreshTriggerPullDistance)
-                                .clamp(0.0, 1.0);
-                        final isRefreshing =
-                            refreshState == RefreshIndicatorMode.refresh ||
-                                refreshState == RefreshIndicatorMode.done;
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    NotificationListener<UserScrollNotification>(
+                      onNotification: (notification) {
+                        if (isOurStory &&
+                            showStoryScrollHint.value &&
+                            notification.direction != ScrollDirection.idle) {
+                          showStoryScrollHint.value = false;
+                        }
 
-                        return SizedBox(
-                          height: pulledExtent,
-                          child: Center(
-                            child: isRefreshing
-                                ? CircularProgressIndicator(
-                                    color: context.colorScheme.primary,
-                                  )
-                                : Opacity(
-                                    opacity: progress,
-                                    child: CircularProgressIndicator(
-                                      value: progress == 1.0 ? null : progress,
-                                      color: context.colorScheme.primary,
-                                    ),
-                                  ),
-                          ),
-                        );
+                        return false;
                       },
-                    ),
-                    SliverToBoxAdapter(
-                      child: HardEdgeColor(
-                        color: context.creamBackground,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _WeddingSectionTransition(
-                              routeName: activeRouteName,
-                              child: child,
-                            ),
-                            const SizedBox(height: _footerTopSpacing),
-                          ],
+                      child: CustomScrollView(
+                        controller: scrollController,
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
                         ),
+                        slivers: [
+                          WeddingAppBar(onHomeTap: goHome),
+                          CupertinoSliverRefreshControl(
+                            onRefresh: () => ref
+                                .read(websiteRefreshProvider.notifier)
+                                .refresh(),
+                            builder: (
+                              context,
+                              refreshState,
+                              pulledExtent,
+                              refreshTriggerPullDistance,
+                              refreshIndicatorExtent,
+                            ) {
+                              final progress =
+                                  (pulledExtent / refreshTriggerPullDistance)
+                                      .clamp(0.0, 1.0);
+
+                              final isRefreshing = refreshState ==
+                                      RefreshIndicatorMode.refresh ||
+                                  refreshState == RefreshIndicatorMode.done;
+
+                              return SizedBox(
+                                height: pulledExtent,
+                                child: Center(
+                                  child: isRefreshing
+                                      ? CircularProgressIndicator(
+                                          color: context.colorScheme.primary,
+                                        )
+                                      : Opacity(
+                                          opacity: progress,
+                                          child: CircularProgressIndicator(
+                                            value: progress == 1.0
+                                                ? null
+                                                : progress,
+                                            color: context.colorScheme.primary,
+                                          ),
+                                        ),
+                                ),
+                              );
+                            },
+                          ),
+                          SliverToBoxAdapter(
+                            child: HardEdgeColor(
+                              color: context.creamBackground,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _WeddingSectionTransition(
+                                    routeName: activeRouteName,
+                                    child: child,
+                                  ),
+                                  const SizedBox(
+                                    height: _footerTopSpacing,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    if (isOurStory)
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 18,
+                        child: Center(
+                          child: SwipeScrollHint(
+                            visible: showStoryScrollHint.value,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
