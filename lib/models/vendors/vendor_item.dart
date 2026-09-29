@@ -11,7 +11,7 @@ enum VendorCategory {
   floralsStyling('FLORALS & STYLING'),
   foodDrink('FOOD & DRINK'),
   musicEntertainment('MUSIC & ENTERTAINMENT'),
-  beauty('BEAUTY');
+  beauty('HAIR & MAKEUP');
 
   const VendorCategory(this.title);
 
