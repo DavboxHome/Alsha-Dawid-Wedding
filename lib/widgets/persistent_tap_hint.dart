@@ -11,6 +11,7 @@ class PersistentTapHint extends HookWidget {
     required this.onTap,
     required this.child,
     this.tapCount = 4,
+    this.yOffset = 0,
     super.key,
   });
 
@@ -18,6 +19,7 @@ class PersistentTapHint extends HookWidget {
   final VoidCallback onTap;
   final Widget child;
   final int tapCount;
+  final double yOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -117,55 +119,58 @@ class PersistentTapHint extends HookWidget {
           Positioned.fill(
             child: IgnorePointer(
               child: Center(
-                child: AnimatedOpacity(
-                  opacity: visible.value ? 1 : 0,
-                  duration: const Duration(milliseconds: 350),
-                  curve: Curves.easeOutCubic,
-                  child: AnimatedBuilder(
-                    animation: controller,
-                    builder: (context, _) {
-                      final progress = controller.value;
+                child: Transform.translate(
+                  offset: Offset(0, yOffset),
+                  child: AnimatedOpacity(
+                    opacity: visible.value ? 1 : 0,
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOutCubic,
+                    child: AnimatedBuilder(
+                      animation: controller,
+                      builder: (context, _) {
+                        final progress = controller.value;
 
-                      final press = Curves.easeInOut.transform(
-                        ((progress - 0.15) / 0.25).clamp(0.0, 1.0),
-                      );
+                        final press = Curves.easeInOut.transform(
+                          ((progress - 0.15) / 0.25).clamp(0.0, 1.0),
+                        );
 
-                      final release = Curves.easeInOut.transform(
-                        ((progress - 0.48) / 0.25).clamp(0.0, 1.0),
-                      );
+                        final release = Curves.easeInOut.transform(
+                          ((progress - 0.48) / 0.25).clamp(0.0, 1.0),
+                        );
 
-                      final pressure = press * (1 - release);
+                        final pressure = press * (1 - release);
 
-                      final opacity = (progress / 0.15).clamp(0.0, 1.0) *
-                          (1 -
-                              ((progress - 0.80) / 0.20)
-                                  .clamp(0.0, 1.0));
+                        final opacity = (progress / 0.15).clamp(0.0, 1.0) *
+                            (1 -
+                                ((progress - 0.80) / 0.20)
+                                    .clamp(0.0, 1.0));
 
-                      return Opacity(
-                        opacity: opacity,
-                        child: Transform.translate(
-                          offset: Offset(0, pressure * 9),
-                          child: Transform.scale(
-                            scale: 1 - pressure * 0.12,
-                            child: Icon(
-                              Icons.touch_app_rounded,
-                              size: 64,
-                              color: context.burgundyAccent,
-                              shadows: [
-                                Shadow(
-                                  color: context.creamBackground,
-                                  blurRadius: 12,
-                                ),
-                                Shadow(
-                                  color: context.creamBackground,
-                                  blurRadius: 20,
-                                ),
-                              ],
+                        return Opacity(
+                          opacity: opacity,
+                          child: Transform.translate(
+                            offset: Offset(0, pressure * 9),
+                            child: Transform.scale(
+                              scale: 1 - pressure * 0.12,
+                              child: Icon(
+                                Icons.touch_app_rounded,
+                                size: 64,
+                                color: context.burgundyAccent,
+                                shadows: [
+                                  Shadow(
+                                    color: context.creamBackground,
+                                    blurRadius: 12,
+                                  ),
+                                  Shadow(
+                                    color: context.creamBackground,
+                                    blurRadius: 20,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
