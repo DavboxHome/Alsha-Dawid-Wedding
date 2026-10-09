@@ -166,7 +166,7 @@ class _DrinksMenu extends StatelessWidget {
     if (food != null) {
       for (final item in food!.items) {
         if (item.name.trim().toLowerCase() == 'drinks') {
-          imageUrl = item.imageUrl;
+          imageUrl = item.image?.absoluteUrl;
           break;
         }
       }
