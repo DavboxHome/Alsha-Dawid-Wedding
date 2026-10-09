@@ -12,6 +12,7 @@ import '../../utils/extension/context_extension.dart';
 import '../../widgets/heart_divider.dart';
 import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
+import '../../widgets/persistent_tap_hint.dart';
 import '../../widgets/zoomable_image_viewer.dart';
 
 @RoutePage()
@@ -153,6 +154,7 @@ class _FoodMenuBody extends HookWidget {
   }
 }
 
+
 class _DrinksMenu extends StatelessWidget {
   const _DrinksMenu({
     required this.food,
@@ -179,8 +181,9 @@ class _DrinksMenu extends StatelessWidget {
 
     final url = imageUrl;
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return PersistentTapHint(
+      storageKey: 'drinks_menu_tap_hint_completed_v1',
+      tapCount: 4,
       onTap: () {
         ZoomableImageViewer.show(
           context,
