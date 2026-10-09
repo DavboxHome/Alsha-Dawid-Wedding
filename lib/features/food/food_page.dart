@@ -184,6 +184,7 @@ class _DrinksMenu extends StatelessWidget {
     return PersistentTapHint(
       storageKey: 'drinks_menu_tap_hint_completed_v1',
       tapCount: 4,
+      yOffset: -50,
       onTap: () {
         ZoomableImageViewer.show(
           context,
