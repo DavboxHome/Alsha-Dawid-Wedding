@@ -12,6 +12,7 @@ import '../../utils/extension/context_extension.dart';
 import '../../widgets/heart_divider.dart';
 import '../../widgets/lazy_cms_image.dart';
 import '../../widgets/page_availability_gate.dart';
+import '../../widgets/zoomable_image_viewer.dart';
 
 @RoutePage()
 class FoodPage extends ConsumerWidget {
@@ -176,16 +177,27 @@ class _DrinksMenu extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return LazyCmsImage(
-      imageUrl: imageUrl,
-      width: double.infinity,
-      fit: BoxFit.contain,
-      placeholderBuilder: (
-        context, {
-        required loading,
-      }) {
-        return const SizedBox.shrink();
+    final url = imageUrl;
+
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        ZoomableImageViewer.show(
+          context,
+          imageUrl: url,
+        );
       },
+      child: LazyCmsImage(
+        imageUrl: url,
+        width: double.infinity,
+        fit: BoxFit.contain,
+        placeholderBuilder: (
+          context, {
+          required loading,
+        }) {
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }
@@ -220,7 +232,8 @@ class _CulturePillSwitch extends StatelessWidget {
         padding: const EdgeInsets.all(4),
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final segmentWidth = constraints.maxWidth / FoodCulture.values.length;
+            final segmentWidth =
+                constraints.maxWidth / FoodCulture.values.length;
 
             return Stack(
               children: [
