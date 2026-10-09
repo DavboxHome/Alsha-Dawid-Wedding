@@ -1,3 +1,4 @@
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'food_culture.dart';
@@ -21,6 +22,7 @@ class WeddingFoodList with _$WeddingFoodList {
   FoodCulture? get parsedCulture => switch (culture.trim().toLowerCase()) {
         'polish' => FoodCulture.polish,
         'goan' => FoodCulture.goan,
+        'drinks' => FoodCulture.drinks,
         _ => null,
       };
 }
